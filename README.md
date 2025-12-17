@@ -1,0 +1,2 @@
+- Apple-Hig-Designer: https://github.com/axiaoge2/apple-hig-designer 
+- codex-code-review: https://github.com/tyrchen/claude-skills/tree/master/codex-code-review
