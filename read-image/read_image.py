@@ -16,7 +16,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from openai import OpenAI
 
-# Optional: Pillow for image resizing
+# Pillow for image resizing (optional)
 try:
     from PIL import Image
     HAS_PIL = True
@@ -31,11 +31,8 @@ MAX_DIMENSION = 2048
 
 def is_url(path: str) -> bool:
     """Check if the given path is a URL."""
-    try:
-        result = urlparse(path)
-        return result.scheme in ("http", "https")
-    except Exception:
-        return False
+    result = urlparse(path)
+    return result.scheme in ("http", "https")
 
 
 def get_image_mime_type(image_path: str) -> str:
@@ -216,30 +213,14 @@ def read_image(
             max_tokens=4096,
         )
 
-        # Extract response content (handle both object and dict responses)
-        if hasattr(response, "choices"):
-            content = response.choices[0].message.content
-            usage_data = {
-                "prompt_tokens": response.usage.prompt_tokens if response.usage else None,
-                "completion_tokens": response.usage.completion_tokens if response.usage else None,
-                "total_tokens": response.usage.total_tokens if response.usage else None,
-            }
-        elif isinstance(response, dict):
-            choices = response.get("choices", [])
-            if choices:
-                content = choices[0].get("message", {}).get("content", "")
-            else:
-                content = response.get("content", str(response))
-            usage = response.get("usage", {})
-            usage_data = {
-                "prompt_tokens": usage.get("prompt_tokens"),
-                "completion_tokens": usage.get("completion_tokens"),
-                "total_tokens": usage.get("total_tokens"),
-            }
-        else:
-            # Fallback: try to convert to string
-            content = str(response)
-            usage_data = {"prompt_tokens": None, "completion_tokens": None, "total_tokens": None}
+        # Extract response content
+        content = response.choices[0].message.content
+        usage = response.usage
+        usage_data = {
+            "prompt_tokens": usage.prompt_tokens if usage else None,
+            "completion_tokens": usage.completion_tokens if usage else None,
+            "total_tokens": usage.total_tokens if usage else None,
+        }
 
         return {
             "success": True,
