@@ -21,7 +21,7 @@ POST /v1beta/models/{model}:generateContent
 ```
 
 **Models:**
-- `gemini-2.5-flash-image` - Fast, efficient
+- `gemini-3.1-flash-image-preview` - Fast, efficient, good quality
 - `gemini-3-pro-image-preview` - Professional, advanced reasoning
 
 ---
@@ -183,7 +183,7 @@ x-goog-api-key: $NANO_BANANA_API_KEY
 
 ```bash
 curl -s -X POST \
-  "https://undyapi.com/v1beta/models/gemini-2.5-flash-image:generateContent" \
+  "https://undyapi.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent" \
   -H "Content-Type: application/json" \
   -H "x-goog-api-key: $NANO_BANANA_API_KEY" \
   -d '{
@@ -205,7 +205,7 @@ curl -s -X POST \
 IMAGE_BASE64=$(base64 -i input.jpg)
 
 curl -s -X POST \
-  "https://undyapi.com/v1beta/models/gemini-2.5-flash-image:generateContent" \
+  "https://undyapi.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent" \
   -H "Content-Type: application/json" \
   -H "x-goog-api-key: $NANO_BANANA_API_KEY" \
   -d "{

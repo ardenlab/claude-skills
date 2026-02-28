@@ -23,7 +23,7 @@ API_ENDPOINTS=(
 # Get model ID (using case instead of associative array for macOS compatibility)
 get_model_id() {
     case "$1" in
-        flash) echo "gemini-2.5-flash-image" ;;
+        flash) echo "gemini-3.1-flash-image-preview" ;;
         pro) echo "gemini-3-pro-image-preview" ;;
         *) echo "" ;;
     esac

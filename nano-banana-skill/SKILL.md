@@ -42,7 +42,7 @@ Activate this skill when users request:
 
 | Model | ID | Best For |
 |-------|-----|----------|
-| Flash | `gemini-2.5-flash-image` | Fast generation, high volume |
+| Flash | `gemini-3.1-flash-image-preview` | Fast generation, high volume, good quality |
 | Pro | `gemini-3-pro-image-preview` | Professional quality, complex prompts |
 
 ---
