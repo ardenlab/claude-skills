@@ -106,9 +106,10 @@ x-goog-api-key: $NANO_BANANA_API_KEY
         },
         {
           "inlineData": {
-            "mimeType": "image/png",
+            "mimeType": "image/jpeg",
             "data": "<BASE64_ENCODED_IMAGE>"
-          }
+          },
+          "thoughtSignature": "<SIGNATURE_STRING>"
         }
       ],
       "role": "model"
@@ -146,7 +147,8 @@ x-goog-api-key: $NANO_BANANA_API_KEY
 - WebP (`image/webp`)
 
 ### Output
-- PNG (`image/png`) - Default
+- JPEG (`image/jpeg`) - Default
+- PNG (`image/png`)
 
 ---
 
@@ -155,9 +157,17 @@ x-goog-api-key: $NANO_BANANA_API_KEY
 | Field | Type | Description |
 |-------|------|-------------|
 | `responseModalities` | array | Must include `"IMAGE"` for image generation |
-| `imageGenerationConfig.outputImageSize` | string | `"1K"`, `"2K"`, `"4K"` (optional) |
-| `imageGenerationConfig.aspectRatio` | string | `"1:1"`, `"16:9"`, `"9:16"`, `"4:3"`, `"3:4"` (optional) |
+| `imageGenerationConfig.outputImageSize` | string | `"512"` (Flash only), `"1K"`, `"2K"`, `"4K"` (optional) |
+| `imageGenerationConfig.aspectRatio` | string | Model-specific, see below (optional) |
 | `candidateCount` | integer | Number of images to generate (1-4) |
+
+### Supported Aspect Ratios
+
+**Flash** (`gemini-3.1-flash-image-preview`) — 14 ratios:
+`1:1`, `1:4`, `1:8`, `2:3`, `3:2`, `3:4`, `4:1`, `4:3`, `4:5`, `5:4`, `8:1`, `9:16`, `16:9`, `21:9`
+
+**Pro** (`gemini-3-pro-image-preview`) — 10 ratios:
+`1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`
 
 ### Example with imageGenerationConfig
 

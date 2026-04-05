@@ -103,14 +103,15 @@ bash ~/.claude/skills/nano-banana-skill/scripts/generate.sh \
 
 ### Aspect Ratios
 
-- `1:1` - Square
-- `16:9` - Widescreen landscape
-- `9:16` - Portrait (stories/reels)
-- `4:3` - Standard landscape
-- `3:4` - Standard portrait
+**Flash model** (14 ratios):
+`1:1`, `1:4`, `1:8`, `2:3`, `3:2`, `3:4`, `4:1`, `4:3`, `4:5`, `5:4`, `8:1`, `9:16`, `16:9`, `21:9`
+
+**Pro model** (10 ratios):
+`1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`
 
 ### Output Image Sizes
 
+- `512` - 512px (Flash only)
 - `1K` - 1024px
 - `2K` - 2048px
 - `4K` - 4096px (highest resolution)
@@ -205,15 +206,15 @@ Error: Unsupported image format
 
 1. **Be specific in prompts**: Include style, mood, lighting, and composition details
 2. **Use Pro model for text rendering**: Flash model may not render text accurately
-3. **Choose appropriate aspect ratios**: Match the intended use case
-4. **Start with medium quality**: Upgrade to high only when needed
+3. **Choose appropriate aspect ratios**: Flash supports extreme ratios (1:8, 8:1), Pro does not
+4. **Use 512 for quick iterations**: Flash-only, fastest generation
 
 ---
 
 ## Output
 
 Generated images are saved to the specified output directory with timestamped filenames:
-- `nano_banana_20260109_143052.png`
+- `nano_banana_20260109_143052.jpg` (extension matches actual format from API)
 
 The script also outputs:
 - The full path to the generated image
