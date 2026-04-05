@@ -9,8 +9,8 @@ set -e
 PROMPT=""
 INPUT_IMAGE=""
 OUTPUT_DIR="./"
-ASPECT_RATIO="1:1"
-QUALITY="medium"
+ASPECT_RATIO=""
+IMAGE_SIZE=""
 MODEL="flash"
 
 # API endpoints (in order of priority)
@@ -46,8 +46,8 @@ OPTIONS:
     -p, --prompt TEXT       Text description for image generation (required)
     -i, --image PATH        Input image path for editing (optional)
     -o, --output DIR        Output directory (default: ./)
-    -r, --ratio RATIO       Aspect ratio: 1:1, 16:9, 9:16, 4:3, 3:4 (default: 1:1)
-    -q, --quality LEVEL     Quality: low, medium, high (default: medium)
+    -r, --ratio RATIO       Aspect ratio: 1:1, 16:9, 9:16, 4:3, 3:4 (optional)
+    -s, --size SIZE         Output image size: 1K, 2K, 4K (optional)
     -m, --model MODEL       Model: flash, pro (default: flash)
     -h, --help              Show this help message
 
@@ -58,8 +58,8 @@ EXAMPLES:
     # Edit existing image
     $(basename "$0") -p "Add a rainbow" -i photo.jpg -o ./edited
 
-    # High quality with specific ratio
-    $(basename "$0") -p "Landscape sunset" -r 16:9 -m pro -q high -o ./output
+    # High quality 4K with specific ratio
+    $(basename "$0") -p "Landscape sunset" -r 16:9 -s 4K -m pro -o ./output
 
 EOF
     exit 0
@@ -84,8 +84,8 @@ while [[ $# -gt 0 ]]; do
             ASPECT_RATIO="$2"
             shift 2
             ;;
-        -q|--quality)
-            QUALITY="$2"
+        -s|--size)
+            IMAGE_SIZE="$2"
             shift 2
             ;;
         -m|--model)
@@ -130,37 +130,35 @@ if [[ -z "$MODEL_ID" ]]; then
     exit 1
 fi
 
-# Validate aspect ratio
-valid_ratios=("1:1" "16:9" "9:16" "4:3" "3:4")
-if [[ ! " ${valid_ratios[*]} " =~ " ${ASPECT_RATIO} " ]]; then
-    echo -e "${RED}Error: Invalid aspect ratio '$ASPECT_RATIO'${NC}" >&2
-    echo "Valid options: ${valid_ratios[*]}" >&2
-    exit 1
+# Validate aspect ratio (if specified)
+if [[ -n "$ASPECT_RATIO" ]]; then
+    valid_ratios=("1:1" "16:9" "9:16" "4:3" "3:4")
+    if [[ ! " ${valid_ratios[*]} " =~ " ${ASPECT_RATIO} " ]]; then
+        echo -e "${RED}Error: Invalid aspect ratio '$ASPECT_RATIO'${NC}" >&2
+        echo "Valid options: ${valid_ratios[*]}" >&2
+        exit 1
+    fi
 fi
 
-# Validate quality
-valid_qualities=("low" "medium" "high")
-if [[ ! " ${valid_qualities[*]} " =~ " ${QUALITY} " ]]; then
-    echo -e "${RED}Error: Invalid quality '$QUALITY'${NC}" >&2
-    echo "Valid options: ${valid_qualities[*]}" >&2
-    exit 1
+# Validate image size (if specified)
+if [[ -n "$IMAGE_SIZE" ]]; then
+    valid_sizes=("1K" "2K" "4K")
+    if [[ ! " ${valid_sizes[*]} " =~ " ${IMAGE_SIZE} " ]]; then
+        echo -e "${RED}Error: Invalid image size '$IMAGE_SIZE'${NC}" >&2
+        echo "Valid options: ${valid_sizes[*]}" >&2
+        exit 1
+    fi
 fi
 
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
-
-# Build the prompt with aspect ratio hint
-FULL_PROMPT="$PROMPT"
-if [[ "$ASPECT_RATIO" != "1:1" ]]; then
-    FULL_PROMPT="$PROMPT. Generate with aspect ratio $ASPECT_RATIO."
-fi
 
 # Build request JSON
 build_request() {
     local parts_json=""
 
     # Add text prompt
-    parts_json="{\"text\": $(echo "$FULL_PROMPT" | jq -Rs .)}"
+    parts_json="{\"text\": $(echo "$PROMPT" | jq -Rs .)}"
 
     # Add image if provided
     if [[ -n "$INPUT_IMAGE" ]]; then
@@ -201,13 +199,28 @@ build_request() {
         parts_json="$parts_json, {\"inline_data\": {\"mime_type\": \"$mime_type\", \"data\": \"$image_base64\"}}"
     fi
 
+    # Build imageGenerationConfig (only when optional fields are set)
+    local image_gen_config=""
+    if [[ -n "$IMAGE_SIZE" ]] || [[ -n "$ASPECT_RATIO" ]]; then
+        local config_fields=""
+        if [[ -n "$IMAGE_SIZE" ]]; then
+            config_fields="\"outputImageSize\": \"$IMAGE_SIZE\""
+        fi
+        if [[ -n "$ASPECT_RATIO" ]]; then
+            [[ -n "$config_fields" ]] && config_fields="$config_fields, "
+            config_fields="${config_fields}\"aspectRatio\": \"$ASPECT_RATIO\""
+        fi
+        image_gen_config=",
+    \"imageGenerationConfig\": {$config_fields}"
+    fi
+
     cat << EOF
 {
   "contents": [{
     "parts": [$parts_json]
   }],
   "generationConfig": {
-    "responseModalities": ["TEXT", "IMAGE"]
+    "responseModalities": ["TEXT", "IMAGE"]${image_gen_config}
   }
 }
 EOF
@@ -229,8 +242,8 @@ echo -e "${YELLOW}Generating image...${NC}"
 echo "Model: $MODEL_ID"
 echo "Prompt: $PROMPT"
 [[ -n "$INPUT_IMAGE" ]] && echo "Input: $INPUT_IMAGE"
-echo "Aspect Ratio: $ASPECT_RATIO"
-echo "Quality: $QUALITY"
+[[ -n "$ASPECT_RATIO" ]] && echo "Aspect Ratio: $ASPECT_RATIO"
+[[ -n "$IMAGE_SIZE" ]] && echo "Image Size: $IMAGE_SIZE"
 echo ""
 
 RESPONSE=""

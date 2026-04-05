@@ -71,18 +71,21 @@ x-goog-api-key: $NANO_BANANA_API_KEY
 }
 ```
 
-### With Aspect Ratio Control (Pro Model)
+### With Image Generation Config (optional)
 
 ```json
 {
   "contents": [{
     "parts": [
-      {"text": "A landscape photo, aspect ratio 16:9"}
+      {"text": "A landscape photo"}
     ]
   }],
   "generationConfig": {
     "responseModalities": ["TEXT", "IMAGE"],
-    "aspectRatio": "16:9"
+    "imageGenerationConfig": {
+      "outputImageSize": "4K",
+      "aspectRatio": "16:9"
+    }
   }
 }
 ```
@@ -152,8 +155,26 @@ x-goog-api-key: $NANO_BANANA_API_KEY
 | Field | Type | Description |
 |-------|------|-------------|
 | `responseModalities` | array | Must include `"IMAGE"` for image generation |
-| `aspectRatio` | string | `"1:1"`, `"16:9"`, `"9:16"`, `"4:3"`, `"3:4"` |
+| `imageGenerationConfig.outputImageSize` | string | `"1K"`, `"2K"`, `"4K"` (optional) |
+| `imageGenerationConfig.aspectRatio` | string | `"1:1"`, `"16:9"`, `"9:16"`, `"4:3"`, `"3:4"` (optional) |
 | `candidateCount` | integer | Number of images to generate (1-4) |
+
+### Example with imageGenerationConfig
+
+```json
+{
+  "contents": [{
+    "parts": [{"text": "A high resolution landscape"}]
+  }],
+  "generationConfig": {
+    "responseModalities": ["TEXT", "IMAGE"],
+    "imageGenerationConfig": {
+      "outputImageSize": "4K",
+      "aspectRatio": "16:9"
+    }
+  }
+}
+```
 
 ---
 

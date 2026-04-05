@@ -63,12 +63,12 @@ bash ~/.claude/skills/nano-banana-skill/scripts/generate.sh \
   -o ./output \
   -r 16:9
 
-# Using Pro model for higher quality
+# Using Pro model with 4K output
 bash ~/.claude/skills/nano-banana-skill/scripts/generate.sh \
   -p "A detailed portrait of a robot philosopher" \
   -o ./output \
   -m pro \
-  -q high
+  -s 4K
 ```
 
 ### Image Editing
@@ -97,23 +97,23 @@ bash ~/.claude/skills/nano-banana-skill/scripts/generate.sh \
 | `--prompt` | `-p` | Text description (required) | - |
 | `--image` | `-i` | Input image path for editing | - |
 | `--output` | `-o` | Output directory | `./` |
-| `--ratio` | `-r` | Aspect ratio | `1:1` |
-| `--quality` | `-q` | Quality level | `medium` |
+| `--ratio` | `-r` | Aspect ratio (optional) | API default |
+| `--size` | `-s` | Output image size (optional) | API default |
 | `--model` | `-m` | Model: flash/pro | `flash` |
 
 ### Aspect Ratios
 
-- `1:1` - Square (default)
+- `1:1` - Square
 - `16:9` - Widescreen landscape
 - `9:16` - Portrait (stories/reels)
 - `4:3` - Standard landscape
 - `3:4` - Standard portrait
 
-### Quality Levels
+### Output Image Sizes
 
-- `low` - Faster generation, smaller file
-- `medium` - Balanced (default)
-- `high` - Best quality, slower
+- `1K` - 1024px
+- `2K` - 2048px
+- `4K` - 4096px (highest resolution)
 
 ---
 
@@ -127,7 +127,7 @@ bash ~/.claude/skills/nano-banana-skill/scripts/generate.sh \
   -o ./logos \
   -r 1:1 \
   -m pro \
-  -q high
+  -s 2K
 ```
 
 ### 2. Create Social Media Content
@@ -164,7 +164,7 @@ bash ~/.claude/skills/nano-banana-skill/scripts/generate.sh \
   -o ./concept \
   -r 16:9 \
   -m pro \
-  -q high
+  -s 4K
 ```
 
 ---
